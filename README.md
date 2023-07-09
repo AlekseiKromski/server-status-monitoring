@@ -1,3 +1,3 @@
 # Some readme ...
 
-soon
+[Posts about this app 🔗](https://blog.alekseikromski.com/5)

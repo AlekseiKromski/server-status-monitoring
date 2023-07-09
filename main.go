@@ -57,6 +57,9 @@ func main() {
 		},
 	}
 	successStatusCodes := []int{200, 400, 500, 403}
+	client := http.Client{
+		Timeout: 2 * time.Second,
+	}
 
 	writer := uilive.New()
 	// start listening for updates and render
@@ -65,23 +68,23 @@ func main() {
 	go func() {
 		for {
 			for _, app := range applications {
-				req, err := http.NewRequest(http.MethodGet, app.link, nil)
+				res, err := client.Get(app.link)
 				if err != nil {
 					app.status = FAILED
+					app.statusCode = 0
+					app.lastCheck = time.Now()
 					continue
 				}
-				res, err := http.DefaultClient.Do(req)
+
 				app.statusCode = res.StatusCode
 				app.lastCheck = time.Now()
 
 				if contains(res.StatusCode, successStatusCodes) && err == nil {
 					app.status = SUCCESS
 				} else {
-
 					app.status = FAILED
 					continue
 				}
-
 			}
 			time.Sleep(5 * time.Second)
 		}
