@@ -1,3 +1,3 @@
 # Some readme ...
 
-[Posts about this app 🔗](https://blog.alekseikromski.com/post/10](https://blog.alekseikromski.com/5)https://blog.alekseikromski.com/5)
+[Posts about this app 🔗](https://blog.alekseikromski.com/post/10)
