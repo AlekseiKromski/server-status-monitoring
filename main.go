@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/fatih/color"
-	"github.com/go-ping/ping"
 	"github.com/gosuri/uilive"
+	"net/http"
 	"time"
 )
 
@@ -23,39 +23,41 @@ var (
 )
 
 type application struct {
-	link      string
-	ip        string
-	status    status
-	lastCheck time.Time
+	link       string
+	status     status
+	statusCode int
+	lastCheck  time.Time
 }
 
 func main() {
 	applications := []*application{
 		&application{
-			link:   "kromline.ee",
+			link:   "https://kromline.ee",
 			status: INIT,
 		},
 		&application{
-			link:   "admin.kromline.ee",
+			link:   "https://admin.kromline.ee",
 			status: INIT,
 		},
 		&application{
-			link:   "alekseikromski.com",
+			link:   "https://alekseikromski.com",
 			status: INIT,
 		},
 		&application{
-			link:   "jenkins.alekseikromski.com",
+			link:   "https://jenkins.alekseikromski.com",
 			status: INIT,
 		},
 		&application{
-			link:   "docker.alekseikromski.com",
+			link:   "https://docker.alekseikromski.com",
 			status: INIT,
 		},
 		&application{
-			link:   "blog.alekseikromski.com",
+			link:   "https://blog.alekseikromski.com",
 			status: INIT,
 		},
 	}
+	successStatusCodes := []int{200, 400, 500, 403}
+
 	writer := uilive.New()
 	// start listening for updates and render
 	writer.Start()
@@ -63,24 +65,23 @@ func main() {
 	go func() {
 		for {
 			for _, app := range applications {
-				pinger, err := ping.NewPinger(app.link)
+				req, err := http.NewRequest(http.MethodGet, app.link, nil)
 				if err != nil {
-					panic(err)
-				}
-
-				pinger.Count = 1
-				pinger.Timeout = 2 * time.Second
-				pinger.Run() // blocks until finished
-				stats := pinger.Statistics()
-
-				if stats.PacketLoss > 0.0 {
 					app.status = FAILED
-				} else {
-					app.status = SUCCESS
+					continue
 				}
-				app.ip = stats.IPAddr.String()
+				res, err := http.DefaultClient.Do(req)
+				app.statusCode = res.StatusCode
 				app.lastCheck = time.Now()
-				time.Sleep(1 * time.Second)
+
+				if contains(res.StatusCode, successStatusCodes) && err == nil {
+					app.status = SUCCESS
+				} else {
+
+					app.status = FAILED
+					continue
+				}
+
 			}
 			time.Sleep(5 * time.Second)
 		}
@@ -92,6 +93,15 @@ func main() {
 	}
 
 	writer.Stop() // flush and stop rendering
+}
+
+func contains(code int, list []int) bool {
+	for _, item := range list {
+		if code == item {
+			return true
+		}
+	}
+	return false
 }
 
 func render(applications []*application, writer *uilive.Writer) {
@@ -106,7 +116,7 @@ func render(applications []*application, writer *uilive.Writer) {
 		case FAILED:
 			status = failed.Sprintf("%s", app.status)
 		}
-		content += fmt.Sprintf("[%s]: %s [%s] (%.fs ago)\n", status, app.link, app.ip, time.Now().Sub(app.lastCheck).Seconds())
+		content += fmt.Sprintf("[%s][%d]: %s (%.fs ago)\n", status, app.statusCode, app.link, time.Now().Sub(app.lastCheck).Seconds())
 	}
 	fmt.Fprintf(writer, content)
 
