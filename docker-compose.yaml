@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  web:
+    container_name: 'server-status-monitoring'
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3010:3010"
