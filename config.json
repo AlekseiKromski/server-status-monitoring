@@ -1,0 +1,10 @@
+{
+  "email_host": "",
+  "email_username": "",
+  "email_password": "",
+  "email_port": 587,
+  "email_to": "",
+  "port": 3010,
+  "count": 5,
+  "timeout": 5
+}
