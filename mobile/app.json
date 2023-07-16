@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "mobile",
+    "slug": "mobile",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "740a2158-a77a-4e7d-b9ef-78917de95e94"
+      }
+    }
+  },
+  "name": "mobile"
+}
