@@ -1,7 +1,7 @@
 FROM node:16.15-alpine
 WORKDIR /app
 COPY ./front-end ./
-RUN npm run i
+RUN npm i
 RUN npm run build
 
 FROM golang:1.19.4-alpine
