@@ -37,6 +37,14 @@ type Application struct {
 func Start(update chan []*Application, config *Config) {
 	applications := []*Application{
 		&Application{
+			Link:   "https://kromline.alekseikromski.com",
+			Status: INIT,
+		},
+		&Application{
+			Link:   "https://kromline-admin.alekseikromski.com",
+			Status: INIT,
+		},
+		&Application{
 			Link:   "https://stopper.vaheta.me/",
 			Status: INIT,
 		},
