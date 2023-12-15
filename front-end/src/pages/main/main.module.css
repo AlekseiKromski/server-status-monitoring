@@ -1,0 +1,23 @@
+.main {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.main-block {
+    width: 80%;
+}
+.status{
+    width: 100%;
+    margin: 30px;
+    text-align: left;
+}
+.green{
+    background-color: green;
+    color: white;
+}
+.red {
+    background-color: red;
+    color: white;
+}
